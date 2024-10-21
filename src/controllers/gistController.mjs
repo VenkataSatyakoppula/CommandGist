@@ -1,4 +1,4 @@
-import { gistCreate,getGistbyId, getAllGists, updateGistById, deleteGistById, gistComments } from "../services/gistService.mjs";
+import { gistCreate,getGistbyId, getAllGists, updateGistById, deleteGistById, gistComments,getPublicGists } from "../services/gistService.mjs";
 import { createUniqueSlug } from "../utils/util.mjs";
 // @route   POST /gist
 export const createGist = async (req, res) => {
@@ -75,9 +75,12 @@ export const getGistComments = async (req,res) =>{
         res.status(500).json({ message: error.message });
     }
 }
-
-
-
-
-
-
+// @routr GET /gist/public
+export const publicGists = async (req, res) => {
+    try {
+        const gists = await getPublicGists();
+        res.status(200).json(gists);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

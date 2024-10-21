@@ -29,6 +29,10 @@ export const gistComments = async (userId,gistId) =>{
     return await Comment.find({user_id:userId,gist_id:gistId});
 };
 
+export const getPublicGists = async () =>{
+    return await Gist.find({status:"public"});
+};
+
 export const getExistingSlugs = async (existingSlug) => {
     return await Gist.find({slug:existingSlug});
-} 
+};
