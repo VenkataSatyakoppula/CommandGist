@@ -1,5 +1,6 @@
 import { gistCreate,getGistbyId, getAllGists, updateGistById, deleteGistById, gistComments,getPublicGists } from "../services/gistService.mjs";
-import { createUniqueSlug } from "../utils/util.mjs";
+import {analyticsSet,getAnalyticsByGistId } from "../services/analyticsService.mjs"
+import { createUniqueSlug} from "../utils/util.mjs";
 // @route   POST /gist
 export const createGist = async (req, res) => {
     try {
@@ -16,7 +17,7 @@ export const createGist = async (req, res) => {
 export const gistbyID = async (req, res) => {
     try {
         let curUser = req.user
-        const gist = await getGistbyId(curUser._id,req.params.id);
+        const gist = await getGistbyId(curUser._id,req.params.id,false);
         if (!gist) {
             return res.status(404).json({ message: 'Gist not found' });
         }
@@ -75,11 +76,25 @@ export const getGistComments = async (req,res) =>{
         res.status(500).json({ message: error.message });
     }
 }
-// @routr GET /gist/public
+
+// @route GET /gist/public
 export const publicGists = async (req, res) => {
     try {
         const gists = await getPublicGists();
         res.status(200).json(gists);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// @route GET /gist/public/:id
+export const specificPublicGist = async (req, res) => {
+    try {
+        const curUser = req.user;
+        const singleGist = await getGistbyId(req.params.id,true);
+        analyticsSet(req.params.id,curUser,req.cookie.annoUser);
+        let gistAnalytics = getAnalyticsByGistId(req.params.id);
+        res.status(200).json({gist:singleGist,analytics:gistAnalytics});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

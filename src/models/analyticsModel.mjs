@@ -1,5 +1,4 @@
 import  mongoose from 'mongoose';
-import { session } from 'passport';
 const { Schema } = mongoose;
 
 const analyticsSchema = new Schema({

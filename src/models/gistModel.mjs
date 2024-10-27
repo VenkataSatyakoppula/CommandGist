@@ -45,7 +45,7 @@ const gistSchema = new Schema({
     },
     published_at: {
         type: Date,
-        default: null,
+        default: Date.now,
     },
     status: {
         type: String,

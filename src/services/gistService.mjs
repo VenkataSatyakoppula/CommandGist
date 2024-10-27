@@ -5,7 +5,10 @@ export const gistCreate = async (body) => {
     return await blogPost.save();
 };
 
-export const getGistbyId = async (userId,id) => {
+export const getGistbyId = async (userId=null,id,publicGist=false) => {
+    if(publicGist){
+        return await Gist.findOne({_id:id,status:"public"}).populate('author_id', 'username')
+    }
     return await Gist.findOne({_id:id,author_id:userId}).populate('author_id', 'username email');
 };
 
