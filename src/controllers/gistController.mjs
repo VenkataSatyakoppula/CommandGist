@@ -91,9 +91,9 @@ export const publicGists = async (req, res) => {
 export const specificPublicGist = async (req, res) => {
     try {
         const curUser = req.user;
-        const singleGist = await getGistbyId(req.params.id,true);
-        analyticsSet(req.params.id,curUser,req.cookie.annoUser);
-        let gistAnalytics = getAnalyticsByGistId(req.params.id);
+        const singleGist = await getGistbyId(curUser,req.params.id,true);
+        await analyticsSet(req.params.id,curUser,req.cookies["annoUser"]);
+        let gistAnalytics = await getAnalyticsByGistId(req.params.id);
         res.status(200).json({gist:singleGist,analytics:gistAnalytics});
     } catch (error) {
         res.status(500).json({ message: error.message });

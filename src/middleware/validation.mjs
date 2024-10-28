@@ -7,6 +7,7 @@ const checkIntID = (req, res, next) => {
 };
 
 const allowAnonymousUsers = (req, res, next) =>{
+    console.log(req.user);
     if (!req.user){
       const anonymousId = `anon-${Date.now()}`;  
       res.cookie('annoUser', anonymousId, {
@@ -15,6 +16,7 @@ const allowAnonymousUsers = (req, res, next) =>{
       });
       console.log('New anonymous user assigned:', anonymousId);
     }
+    next();
 }
 export default {
   checkIntID,

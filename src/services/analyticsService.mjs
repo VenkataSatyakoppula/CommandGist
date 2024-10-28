@@ -5,11 +5,12 @@ export const analyticsSet = async (post_id,user_id=null,session_id=null) => {
 }
 
 export const getAnalyticsByGistId = async (post_id) => {
-    return await Analytics.findById(post_id);
+    return await Analytics.findOne({post_id:post_id});
 }
 
 async function setAnalytics(post_id,user_id=null,session_id=null){
     try {
+        console.log(user_id,session_id);
         if (user_id){
         return await Analytics.findOneAndUpdate(
                 {
@@ -27,13 +28,13 @@ async function setAnalytics(post_id,user_id=null,session_id=null){
         return await  Analytics.findOneAndUpdate(
                 {
                     post_id:post_id,
-                    viewed_sessions:{$ne: session_id}
+                    "viewed_sessions.session_id":{$ne: session_id}
                 },
                 {
-                    $addToSet: { viewed_sessions: session_id },
+                    $addToSet: { viewed_sessions: { session_id: session_id } },
                     $inc: { views: 1 }
                 },
-                { new: true, runValidators: true }
+                { new: true}
             );
     }
     } catch (error) {
