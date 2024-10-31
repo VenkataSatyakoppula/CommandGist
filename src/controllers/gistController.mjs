@@ -1,11 +1,12 @@
 import { gistCreate,getGistbyId, getAllGists, updateGistById, deleteGistById, gistComments,getPublicGists } from "../services/gistService.mjs";
-import {analyticsSet,getAnalyticsByGistId } from "../services/analyticsService.mjs"
-import { createUniqueSlug} from "../utils/util.mjs";
+import {analyticsSet,getAnalyticsByGistId,UserExistsinAnalytics } from "../services/analyticsService.mjs"
+import util from "../utils/util.mjs";
+
 // @route   POST /gist
 export const createGist = async (req, res) => {
     try {
         let curUser = req.user;
-        let stringSlug = await createUniqueSlug(req.body["title"]);
+        let stringSlug = await util.createUniqueSlug(req.body["title"]);
         const singleGist = await gistCreate({...req.body,slug: stringSlug,author_id:curUser._id});
         res.status(200).json(singleGist);
     } catch (error) {
@@ -91,10 +92,13 @@ export const publicGists = async (req, res) => {
 export const specificPublicGist = async (req, res) => {
     try {
         const curUser = req.user;
+        let gistAnalytics;
         const singleGist = await getGistbyId(curUser,req.params.id,true);
-        await analyticsSet(req.params.id,curUser,req.cookies["annoUser"]);
-        let gistAnalytics = await getAnalyticsByGistId(req.params.id);
-        res.status(200).json({gist:singleGist,analytics:gistAnalytics});
+        gistAnalytics = await UserExistsinAnalytics(req.params.id,curUser,req.cookies["annoUser"]);
+        if(!gistAnalytics){
+            gistAnalytics = await analyticsSet(req.params.id,curUser,req.cookies["annoUser"]);
+        }
+        res.status(200).json({gist:singleGist,analytics: util.analyticsToViewsAndUpvotes(gistAnalytics)});
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

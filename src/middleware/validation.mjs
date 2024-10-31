@@ -1,3 +1,4 @@
+import passport from "passport";
 const checkIntID = (req, res, next) => {
     const id = parseInt(req.params.id, 10);
     if (isNaN(id)) {
@@ -7,8 +8,8 @@ const checkIntID = (req, res, next) => {
 };
 
 const allowAnonymousUsers = (req, res, next) =>{
-    console.log(req.user);
-    if (!req.user){
+  console.log(!req.user && !req.cookies["annoUser"]);
+    if (!req.user && !req.cookies["annoUser"]){
       const anonymousId = `anon-${Date.now()}`;  
       res.cookie('annoUser', anonymousId, {
         httpOnly: true,    
@@ -18,7 +19,21 @@ const allowAnonymousUsers = (req, res, next) =>{
     }
     next();
 }
+
+const optionalAuth = (req, res, next) => {
+  passport.authenticate('jwt', { session: false }, (err, user) => {
+      if (err) {
+          return next(err);  
+      }
+      if (user) {
+          req.user = user;  
+      }
+      next();
+  })(req, res, next);
+};
+
 export default {
   checkIntID,
-  allowAnonymousUsers
+  allowAnonymousUsers,
+  optionalAuth
 };

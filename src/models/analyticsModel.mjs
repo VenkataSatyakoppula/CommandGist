@@ -11,20 +11,13 @@ const analyticsSchema = new Schema({
     user_id:{
     type: Schema.Types.ObjectId,
     ref: 'User',  // Reference to the user
-    unique: true
     }
   }],
-  viewed_sessions:[{
-    session_id: {
-      type: String,
-      unique: true
-    },
-  }],
+  viewed_sessions: {type:Array,default:[]},
   vote_by:[{ //only users can vote
     user_id: {
       type: Schema.Types.ObjectId,
       ref: 'User',  // Reference to the user
-      unique: true
     }
   }],
   views: {

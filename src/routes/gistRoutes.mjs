@@ -3,11 +3,10 @@ import {allGists, createGist, deleteGist, gistbyID, updateGist,getGistComments,p
 import passport from 'passport';
 import validation from "../middleware/validation.mjs"
 const router = express.Router();
-
 router.get('/public',publicGists);
-
 router.get('/public/:id',
     validation.checkIntID,
+    validation.optionalAuth,
     validation.allowAnonymousUsers,
     specificPublicGist
 );
