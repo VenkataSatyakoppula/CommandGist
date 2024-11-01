@@ -22,6 +22,7 @@ export const profileView = async (req, res) => {
     }
 };
 
+//TODO: return access & refresh token after Registering
 // @route   POST /user
 export const userCreate = async (req, res) => {
     try {
