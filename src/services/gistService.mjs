@@ -7,7 +7,7 @@ export const gistCreate = async (body) => {
 
 export const getGistbyId = async (userId=null,id,publicGist=false) => {
     if(publicGist){
-        return await Gist.findOne({_id:id,status:"public"}).populate('author_id', 'username')
+        return await Gist.findOne({_id:id,status:"public"}).populate('author_id', 'username email');
     }
     return await Gist.findOne({_id:id,author_id:userId}).populate('author_id', 'username email');
 };
@@ -33,7 +33,7 @@ export const gistComments = async (userId,gistId) =>{
 };
 
 export const getPublicGists = async () =>{
-    return await Gist.find({status:"public"});
+    return await Gist.find({status:"public"}).populate('author_id', 'username email');
 };
 
 export const getExistingSlugs = async (existingSlug) => {

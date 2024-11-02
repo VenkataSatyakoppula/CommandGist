@@ -13,7 +13,7 @@ export const UserExistsinAnalytics = async (post_id,user_id=null,sessionId=null)
         return await Analytics.findOne(
                 {
                     post_id:post_id,
-                    "viewed_by": {$elemMatch:{user_id:{$ne: user_id}}}
+                    "viewed_by": user_id
                 });
     }else if(sessionId){
         return await  Analytics.findOne(
@@ -38,7 +38,7 @@ async function setAnalytics(post_id,user_id=null,sessionId=null){
                     $addToSet: { viewed_by: user_id },
                     $inc: { views: 1 }
                 },
-                { new: true, runValidators: true}
+                { new: true, runValidators: true,upsert: true}
             );
     }else if(sessionId){
         return await  Analytics.findOneAndUpdate(

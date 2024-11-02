@@ -8,7 +8,6 @@ const checkIntID = (req, res, next) => {
 };
 
 const allowAnonymousUsers = (req, res, next) =>{
-  console.log(!req.user && !req.cookies["annoUser"]);
     if (!req.user && !req.cookies["annoUser"]){
       const anonymousId = `anon-${Date.now()}`;  
       res.cookie('annoUser', anonymousId, {
