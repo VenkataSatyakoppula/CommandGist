@@ -2,7 +2,8 @@ import express from 'express';
 import { loginUser, refreshToken } from "../controllers/authController.mjs";
 import gistRoutes from "./gistRoutes.mjs";
 import userRoutes from "./userRoutes.mjs";
-import commentRoutes from "./commentRoutes.mjs"
+import commentRoutes from "./commentRoutes.mjs";
+import topicRoutes from "./topicRoutes.mjs";
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -12,7 +13,7 @@ router.get('/', (req, res) => {
 router.use('/gist',gistRoutes);
 router.use('/user',userRoutes);
 router.use('/comment',commentRoutes);
-
+router.use('/topic',topicRoutes);
 //Auth
 router.post('/auth/login',loginUser);
 router.get('/auth/refresh',refreshToken);

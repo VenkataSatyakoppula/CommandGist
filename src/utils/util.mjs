@@ -1,11 +1,11 @@
 import { getExistingSlugs } from "../services/gistService.mjs";
 import slugify from "slugify";
 
-const createUniqueSlug = async (title) => {
+const createUniqueSlug = async (title,type) => {
     let slug = slugify(title);
     let uniqueSlug = slug;
     let count = 1;
-    while ( (await getExistingSlugs(uniqueSlug)).length !=0) {
+    while ( (await getExistingSlugs(uniqueSlug,type)).length !=0) {
       uniqueSlug = `${slug}-${count}`;
       count++;
     }

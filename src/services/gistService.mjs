@@ -1,5 +1,6 @@
 import Gist from "../models/gistModel.mjs"
 import Comment from "../models/commentsModel.mjs";
+import Topic from "../models/topicModel.mjs";
 export const gistCreate = async (body) => {
     const blogPost = new Gist(body);
     return await blogPost.save();
@@ -36,6 +37,32 @@ export const getPublicGists = async () =>{
     return await Gist.find({status:"public"}).populate('author_id', 'username email');
 };
 
-export const getExistingSlugs = async (existingSlug) => {
-    return await Gist.find({slug:existingSlug});
+export const getExistingSlugs = async (existingSlug,type) => {
+    if (type==="gist"){
+        return await Gist.find({slug:existingSlug});
+    }else if(type==="topic"){
+        return await Topic.find({slug:existingSlug});
+    }
+};
+
+export const addGisttoTopic = async (gistId,userId,topicId) => {
+    return await Gist.findOneAndUpdate({
+        _id: gistId,
+        author_id: userId,
+    },{topic: topicId},{ new: true, runValidators: true });
+};
+
+export const removeGistinTopic = async (gistId,userId) => {
+    return await Gist.findOneAndUpdate({
+        _id: gistId,
+        author_id: userId,
+    },{topic: null},{ new: true, runValidators: true });
+};
+
+export const deleteAllGistsinTopic = async (topicId,userId) =>{
+    return await Gist.deleteMany({ author_id:userId ,topic: topicId});
+};
+
+export const allGistsinTopic = async (topicId,userId) => {
+    return await Gist.find({author_id:userId ,topic:topicId});
 };

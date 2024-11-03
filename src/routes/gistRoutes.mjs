@@ -1,5 +1,5 @@
 import express from 'express';
-import {allGists, createGist, deleteGist, gistbyID, updateGist,getGistComments,publicGists,specificPublicGist} from "../controllers/gistController.mjs"
+import {allGists,allGistsbyTopic, createGist, deleteGist, gistbyID, updateGist,getGistComments,publicGists,specificPublicGist,gistTotopic} from "../controllers/gistController.mjs"
 import passport from 'passport';
 import validation from "../middleware/validation.mjs"
 const router = express.Router();
@@ -33,9 +33,18 @@ router.put('/:id',
 );
 
 router.delete('/:id',
-    validation.checkIntID,
     passport.authenticate('jwt',{session:false}),
     deleteGist
+);
+
+router.post('/:gistId/:topicId',
+    passport.authenticate('jwt',{session:false}),
+    gistTotopic
+);
+
+router.get('/topic/:topicId',
+    passport.authenticate('jwt',{session:false}),
+    allGistsbyTopic
 );
 
 router.get('/comments/:id',

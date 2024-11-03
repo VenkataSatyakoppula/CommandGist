@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import Topic from './topicModel.mjs';
 const { Schema } = mongoose;
 
 const gistSchema = new Schema({
@@ -34,6 +35,10 @@ const gistSchema = new Schema({
                 return Array.isArray(v) && v.length >= 0;
             },
         },
+    },
+    topic: {
+        type: Schema.Types.ObjectId,
+        ref: 'Topic'
     },
     created_at: {
         type: Date,
