@@ -56,7 +56,7 @@ export const removeGistinTopic = async (gistId,userId) => {
     return await Gist.findOneAndUpdate({
         _id: gistId,
         author_id: userId,
-    },{topic: null},{ new: true, runValidators: true });
+    },{$unset:{topic: null}},{ new: true, runValidators: true });
 };
 
 export const deleteAllGistsinTopic = async (topicId,userId) =>{

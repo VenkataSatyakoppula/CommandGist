@@ -17,7 +17,8 @@ export const getUserById = async (id) => {
 export const createUser = async (body) => {
     const newUser = new User(body);
     await newUser.save();
-    return newUser
+    const {password, ...otherfields} = newUser.toObject(); 
+    return otherfields 
 };
 
 // @desc    Update a user by ID

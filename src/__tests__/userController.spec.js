@@ -28,7 +28,7 @@ describe("user",()=>{
         await mongoose.disconnect();
         await mongoose.connection.close();
     });
-    describe("get user by id",()=>{
+    describe("USER TEST SUITE",()=>{
         describe("The user exist",()=>{
             it("verify user profile", async ()=>{
                 const {body,statusCode} = await supertest(app).get(`/user/profile`);
@@ -41,13 +41,20 @@ describe("user",()=>{
                 let updatepayload = {
                     email:"new@test.com",
                     profile:{
-                        "first_name":"test"
+                        "first_name":"test",
+                        "doesntexits":"test"
+                    },
+                    hfdf:{
+                      "dfdf":"Dfdfd"
                     }
                 }
+                // Some fields doesn't exist in t updatepayload checking if these are not updated
                 const {body,statusCode} = await supertest(app).put(`/user/update`).send(updatepayload);
                 expect(statusCode).toBe(200);
                 expect(body.email).toBe(updatepayload.email);
                 expect(body.profile.first_name).toBe(updatepayload.profile.first_name);
+                expect(body.profile).not.toHaveProperty("doesntexits");
+                expect(body).not.toHaveProperty("hfdf");
             });
             it("cannot create user with same _id",async()=>{
                const created =  await supertest(app).post(`/user/`).send(userplayload);
@@ -58,7 +65,13 @@ describe("user",()=>{
                 const {body,statusCode} = await supertest(app).delete(`/user/${userplayload._id}`);
                 expect(statusCode).toBe(200);
             });
-            
+            it("add user",async ()=>{
+                const {body,statusCode} = await supertest(app).post(`/user`).send(userplayload);
+                expect(statusCode).toBe(201);
+                expect(body.email).toBe(userplayload.email);
+                expect(body).not.toHaveProperty("password");
+            });
+           
         });
     });
 });

@@ -1,4 +1,4 @@
-import { gistCreate,allGistsinTopic,getGistbyId, getAllGists, updateGistById, deleteGistById, gistComments,getPublicGists, addGisttoTopic } from "../services/gistService.mjs";
+import { gistCreate,removeGistinTopic,allGistsinTopic,getGistbyId, getAllGists, updateGistById, deleteGistById, gistComments,getPublicGists, addGisttoTopic } from "../services/gistService.mjs";
 import {analyticsSet,getAnalyticsByGistId,UserExistsinAnalytics } from "../services/analyticsService.mjs"
 import util from "../utils/util.mjs";
 
@@ -107,7 +107,16 @@ export const specificPublicGist = async (req, res) => {
 // @route POST /gist/:gistId/:topicId
 export const gistTotopic = async (req,res) =>{
     try {
-        const singleGist = await addGisttoTopic(req.params.gistId,req.user._id,req.params.topicId);
+        let action = req.body.action;
+        let singleGist;
+        if(action == "add"){
+            singleGist = await addGisttoTopic(req.params.gistId,req.user._id,req.params.topicId);
+        }else if (action == "remove"){
+            singleGist = await removeGistinTopic(req.params.gistId,req.user._id,req.params.topicId);
+        }else{
+            return res.status(404).json({ message: {action:"No action found in body add or remove"} });
+        }
+        
         if (!singleGist) {
             return res.status(404).json({ message: 'Gist not found' });
         }
