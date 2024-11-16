@@ -63,6 +63,9 @@ export const deleteAllGistsinTopic = async (topicId,userId) =>{
     return await Gist.deleteMany({ author_id:userId ,topic: topicId});
 };
 
-export const allGistsinTopic = async (topicId,userId) => {
+export const allGistsinTopic = async (topicId,userId,publicGist=false) => {
+    if(publicGist){
+        return await Gist.find({ topic: { $exists: true, $eq: topicId },status:"public"}).populate('author_id', 'username email');
+    }
     return await Gist.find({author_id:userId ,topic:topicId});
 };

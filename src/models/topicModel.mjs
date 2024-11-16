@@ -33,7 +33,6 @@ const topicSchema = new Schema({
 
 // Pre-update hook to update `updated_at` on every update
 topicSchema.pre('findOneAndUpdate', async function (next) {
-    const update = this.getUpdate();
     update.updated_at = Date.now();
     next();
 });

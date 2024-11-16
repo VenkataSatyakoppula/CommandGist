@@ -7,7 +7,8 @@ export const createGist = async (req, res) => {
     try {
         let curUser = req.user;
         let stringSlug = await util.createUniqueSlug(req.body["title"],"gist");
-        const singleGist = await gistCreate({...req.body,slug: stringSlug,author_id:curUser._id});
+        let cleaned_body = util.filterBody(req.body,["title","content","tags","topic","status"]);
+        const singleGist = await gistCreate({...cleaned_body,slug: stringSlug,author_id:curUser._id});
         res.status(200).json(singleGist);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -42,7 +43,8 @@ export const allGists = async (req, res) => {
 // @route   PUT /gist/ TODO: what if user whats to update slug? and other fields like Date fields
 export const updateGist = async (req, res) => {
     try {
-        const blogPost = await updateGistById(req.user._id,req.params.id,req.body)
+        let cleaned_body = util.filterBody(req.body,["title","content","tags","topic","status"]);
+        const blogPost = await updateGistById(req.user._id,req.params.id,cleaned_body);
         if (!blogPost) {
             return res.status(404).json({ message: 'Gist not found' });
         }
@@ -126,10 +128,23 @@ export const gistTotopic = async (req,res) =>{
     }
 }
 
-// @route GET /gist/:topicId
+// @route GET /gist/topic/:topicId
 export const allGistsbyTopic = async (req,res) =>{
     try {
         const gists = await allGistsinTopic(req.params.topicId,req.user._id);
+        if (!gists) {
+            return res.status(404).json({ message: 'Gists not found' });
+        }
+        res.status(200).json(gists);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+// @route GET /gist/topic/:topicId/public
+export const publicGistsbyTopic = async (req,res) =>{
+    try {
+        const gists = await allGistsinTopic(req.params.topicId,null,true);
         if (!gists) {
             return res.status(404).json({ message: 'Gists not found' });
         }

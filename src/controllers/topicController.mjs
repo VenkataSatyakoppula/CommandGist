@@ -6,7 +6,8 @@ export const createTopic = async (req, res) => {
     try {
         let curUser = req.user
         let stringSlug = await util.createUniqueSlug(req.body["title"],"topic");
-        const topic = await topicService.TopicCreate({...req.body,slug:stringSlug,user_id:curUser._id});
+        let cleaned_body = util.filterBody(req.body,["title"]);
+        const topic = await topicService.TopicCreate({...cleaned_body,slug:stringSlug,user_id:curUser._id});
         res.status(200).json(topic);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
@@ -41,7 +42,8 @@ export const allTopics = async (req, res) => {
 // @route   PUT /topic/:Id
 export const updateTopic = async (req, res) => {
     try {
-        const topic = await topicService.updateTopicById(req.user._id,req.params.id,req.body);
+        let cleaned_body = util.filterBody(req.body,["title"]);
+        const topic = await topicService.updateTopicById(req.user._id,req.params.id,cleaned_body);
         if (!topic) {
             return res.status(404).json({ message: 'Topic not found' });
         }

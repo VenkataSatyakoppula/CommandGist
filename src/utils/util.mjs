@@ -11,6 +11,7 @@ const createUniqueSlug = async (title,type) => {
     }
     return uniqueSlug;
 }
+
 const analyticsToViewsAndUpvotes = (analytics) =>{
   return {
     views: analytics.views,
@@ -19,8 +20,18 @@ const analyticsToViewsAndUpvotes = (analytics) =>{
   }
 }
 
+const filterBody = (body, allowedFields) => {
+  return Object.keys(body)
+      .filter((key) => allowedFields.includes(key))
+      .reduce((obj, key) => {
+          obj[key] = body[key];
+          return obj;
+      }, {});
+}
+
 export default {
   analyticsToViewsAndUpvotes,
-  createUniqueSlug
+  createUniqueSlug,
+  filterBody
 }
 
