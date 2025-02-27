@@ -1,6 +1,8 @@
 import Gist from "../models/gistModel.mjs"
 import Comment from "../models/commentsModel.mjs";
 import Topic from "../models/topicModel.mjs";
+import Analytics from "../models/analyticsModel.mjs";
+import util from "../utils/util.mjs";
 export const gistCreate = async (body) => {
     const blogPost = new Gist(body);
     return await blogPost.save();
@@ -13,8 +15,29 @@ export const getGistbyId = async (userId=null,id,publicGist=false) => {
     return await Gist.findOne({_id:id,author_id:userId}).populate('author_id', 'username email');
 };
 
-export const getAllGists = async (userId) => {
-    return await Gist.find({author_id:userId}).populate('author_id', 'username email');
+export const getAllGists = async (userId,ispublic=false) => {
+    try {
+        const query = {};
+        if (ispublic) {
+            query.status= "public";
+        }else{
+            query.author_id = userId;
+        }
+        const [gists, analytics] = await Promise.all([
+            Gist.find(query).populate('author_id', 'username email'),
+            Analytics.find({})
+        ]);
+        const analyticsMap = new Map(analytics.map(a => [String(a.post_id), a]));
+        const gistsWithAnalytics = gists.map(gist => ({
+            ...gist.toObject(),
+            analytics: util.analyticsToViewsAndUpvotes(analyticsMap.get(String(gist._id))) // O(1) lookup
+        }));
+        return gistsWithAnalytics;
+    } catch (error) {
+        console.error('Error fetching gists and analytics:', error);
+        throw error;
+    }
+    // return await Gist.find({author_id:userId}).populate('author_id', 'username email');
 };
 
 export const updateGistById = async (userId,id, body) => {

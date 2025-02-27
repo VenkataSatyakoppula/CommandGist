@@ -8,7 +8,6 @@ export const listUsers = async (req, res) => {
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
-
 // @route   GET /user/profile
 export const profileView = async (req, res) => {
     try {
@@ -49,7 +48,8 @@ export const userUpdate = async (req, res) => {
 // @route   DELETE /user/
 export const userDelete = async (req, res) => {
     try {
-        const user = await deleteUser(req.user._id)
+        const user = await deleteUser(req.user._id);
+        res.clearCookie('refreshToken');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }

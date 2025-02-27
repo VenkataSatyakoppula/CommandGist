@@ -36,6 +36,10 @@ const gistSchema = new Schema({
             },
         },
     },
+    isfavarite: {
+        type: Boolean,
+        default: false,
+    },
     topic: {
         type: Schema.Types.ObjectId,
         ref: 'Topic'

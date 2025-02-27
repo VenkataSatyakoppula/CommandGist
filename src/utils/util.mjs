@@ -13,6 +13,13 @@ const createUniqueSlug = async (title,type) => {
 }
 
 const analyticsToViewsAndUpvotes = (analytics) =>{
+  if (!analytics) {
+    return {
+      views: 0,
+      upvotes: 0,
+      downvotes: 0
+    }
+  }
   return {
     views: analytics.views,
     upvotes: analytics.voting.upvotes,

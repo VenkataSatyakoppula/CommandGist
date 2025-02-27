@@ -32,8 +32,7 @@ export const gistbyID = async (req, res) => {
 // @route   GET /gist/
 export const allGists = async (req, res) => {
     try {
-        let curUser = req.user
-        const gists = await getAllGists(curUser._id);
+        const gists = await getAllGists(req.user._id,false);
         res.status(200).json(gists);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -83,7 +82,7 @@ export const getGistComments = async (req,res) =>{
 // @route GET /gist/public
 export const publicGists = async (req, res) => {
     try {
-        const gists = await getPublicGists();
+        const gists = await getAllGists(null,true);
         res.status(200).json(gists);
     } catch (error) {
         res.status(500).json({ message: error.message });
